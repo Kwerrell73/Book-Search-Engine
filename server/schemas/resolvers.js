@@ -13,55 +13,75 @@ const resolvers = {
       }
     
       throw new AuthenticationError('User is not logged in');
-    }
+    }, 
+    
+    //get all users
+    users: async () => {
+      return User.find().select("-__v -password");
+    },
+
+    // get a user by username
+    user: async (parent, { username }) => {
+      return User.findOne({ username }).select("-__v -password");
+    },
+
+    // get a user by _id
+    userById: async (parent, { _id }) => {
+      return User.findOne({ _id }).select("-__v -password");
+    },
+
   },
+
   Mutation: {
+
+    login: async (parent, { email, password }) => {
+      const user = await User.findOne({ email });
+    
+      if (!user) {
+        throw new AuthenticationError('User provided incorrect credentials');
+      }
+    
+      const authPassword = await user.isCorrectPassword(password);
+    
+      if (!authPassword) {
+        throw new AuthenticationError('User provided incorrect credentials');
+      }
+    
+      const token = signToken(user);
+      return { token, user };
+    },
+    
     addUser: async (parent, args) => {
       const user = await User.create(args);
       const token = signToken(user);
 
       return { token, user };
     },
-    login: async (parent, { email, password }) => {
-      const user = await User.findOne({ email });
-    
-      if (!user) {
-        throw new AuthenticationError('Incorrect credentials');
-      }
-    
-      const correctPw = await user.isCorrectPassword(password);
-    
-      if (!correctPw) {
-        throw new AuthenticationError('Incorrect credentials');
-      }
-    
-      const token = signToken(user);
-      return { token, user };
-    },
+   
     saveBook: async (parent, { input }, {user}) => {
       if (user) {
-        const updatedUser = await User.findByIdAndUpdate(
+        const modifiedUser = await User.findByIdAndUpdate(
           { _id: user._id },
           { $addToSet: { savedBooks: input } },
           { new: true, runValidators: true }
         );
     
-        return updatedUser;
+        return modifiedUser;
       }
-      throw new AuthenticationError('You need to be logged in!');
+      throw new AuthenticationError('User must be logged in!');
     },
     removeBook: async (parent, { bookId }, {user}) => {
         if (user) {
-          const updatedUser = await User.findOneAndUpdate(
+          const modifiedUser = await User.findOneAndUpdate(
             { _id: user._id },
             { $pull: { savedBooks: { bookId: bookId } } },
             { new: true, runValidators: true }
           );
       
-          return updatedUser;
+          return modifiedUser;
         }
       
-        throw new AuthenticationError('You need to be logged in!');
+        throw new AuthenticationError('User must be logged in!');
     }
   }
 };
