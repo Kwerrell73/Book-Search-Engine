@@ -60,13 +60,13 @@ const resolvers = {
    
     saveBook: async (parent, { input }, {user}) => {
       if (user) {
-        const modifiedUser = await User.findByIdAndUpdate(
+        const updatedUser = await User.findByIdAndUpdate(
           { _id: user._id },
           { $addToSet: { savedBooks: input } },
           { new: true, runValidators: true }
         );
     
-        return modifiedUser;
+        return updatedUser;
       }
       throw new AuthenticationError('User must be logged in!');
     },
