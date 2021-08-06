@@ -58,11 +58,11 @@ const resolvers = {
       return { token, user };
     },
    
-    saveBook: async (parent, { input }, {user}) => {
+    saveBook: async (parent, { bookData }, {user}) => {
       if (user) {
         const updatedUser = await User.findByIdAndUpdate(
           { _id: user._id },
-          { $addToSet: { savedBooks: input } },
+          { $addToSet: { savedBooks: bookData } },
           { new: true, runValidators: true }
         );
     
