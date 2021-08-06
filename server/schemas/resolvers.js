@@ -15,20 +15,20 @@ const resolvers = {
       throw new AuthenticationError('User is not logged in');
     }, 
     
-    //get all users
-    users: async () => {
-      return User.find().select("-__v -password");
-    },
+    // //get all users
+    // users: async () => {
+    //   return User.find().select("-__v -password");
+    // },
 
-    // get a user by username
-    user: async (parent, { username }) => {
-      return User.findOne({ username }).select("-__v -password");
-    },
+    // // get a user by username
+    // user: async (parent, { username }) => {
+    //   return User.findOne({ username }).select("-__v -password");
+    // },
 
-    // get a user by _id
-    userById: async (parent, { _id }) => {
-      return User.findOne({ _id }).select("-__v -password");
-    },
+    // // get a user by _id
+    // userById: async (parent, { _id }) => {
+    //   return User.findOne({ _id }).select("-__v -password");
+    // },
 
   },
 
