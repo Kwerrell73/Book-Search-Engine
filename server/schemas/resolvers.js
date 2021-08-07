@@ -41,9 +41,9 @@ const resolvers = {
         throw new AuthenticationError('User provided incorrect credentials');
       }
     
-      const authPassword = await user.isCorrectPassword(password);
+      const  correctPw = await user.isCorrectPassword(password);
     
-      if (!authPassword) {
+      if (!correctPw) {
         throw new AuthenticationError('User provided incorrect credentials');
       }
     
