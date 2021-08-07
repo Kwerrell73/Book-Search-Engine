@@ -36,15 +36,16 @@ const resolvers = {
 
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
+    console.log(user);
     
       if (!user) {
-        throw new AuthenticationError('User provided incorrect credentials');
+        throw new AuthenticationError('User provided incorrect email');
       }
     
       const  correctPw = await user.isCorrectPassword(password);
     
       if (!correctPw) {
-        throw new AuthenticationError('User provided incorrect credentials');
+        throw new AuthenticationError('User provided incorrect password');
       }
     
       const token = signToken(user);
